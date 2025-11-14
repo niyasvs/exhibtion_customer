@@ -27,9 +27,9 @@ COPY . /app/
 # Create directory for QR codes
 RUN mkdir -p /app/media/qrcodes
 
-# Collect static files
-RUN python manage.py collectstatic --noinput || true
+# Expose port (Railway will set PORT dynamically)
+EXPOSE 8000
 
-# Run gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "exhibition_project.wsgi:application"]
+# Default command (Railway will override this with railway.json startCommand)
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-8000} --workers 4 --timeout 120 exhibition_project.wsgi:application"]
 
