@@ -60,6 +60,46 @@ exhibition-app/
 - Docker (20.10 or later)
 - Docker Compose (2.0 or later)
 - (Optional) Python 3.11+ for local development
+- (Optional) Railway account for easy cloud deployment
+
+## Deployment Options
+
+### Option 1: Railway (Easiest - Recommended for Beginners) ⭐
+
+Deploy to the cloud in **5 minutes** with zero server management:
+
+```bash
+# 1. Push your code to GitHub
+# 2. Go to railway.app and deploy from GitHub
+# 3. Add PostgreSQL database (1 click)
+# 4. Set environment variables
+# 5. Done! Auto HTTPS, scaling, backups included
+```
+
+**See: [RAILWAY_QUICKSTART.md](RAILWAY_QUICKSTART.md)** for step-by-step guide.
+
+**Cost**: Free tier ($5/month credit) - Perfect for small projects!
+
+### Option 2: Self-Hosted (Full Control)
+
+Deploy on your own VPS (DigitalOcean, AWS, etc):
+
+```bash
+# See PRODUCTION_SETUP.md or PRODUCTION_QUICKSTART.md
+./prod-deploy.sh
+```
+
+**Cost**: $5-50/month for VPS + your time for maintenance.
+
+### Option 3: Local Development
+
+For testing and development:
+
+```bash
+./dev-start.sh
+```
+
+---
 
 ## Quick Start for Development
 

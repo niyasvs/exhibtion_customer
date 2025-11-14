@@ -27,7 +27,7 @@ ALLOWED_HOSTS=*localhost,127.0.0.1,0.0.0.0
 DB_NAME=exhibition_db_dev
 DB_USER=dev_user
 DB_PASSWORD=dev_pass_123
-DB_HOST=db
+DB_HOST=postgres-vcg6-production.up.railway.app
 DB_PORT=5432
 
 # Email Configuration (Console backend for development)

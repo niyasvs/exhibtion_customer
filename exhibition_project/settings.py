@@ -5,6 +5,7 @@ Django settings for exhibition_project.
 from pathlib import Path
 import os
 import environ
+import dj_database_url
 
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Serve static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -69,16 +71,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'exhibition_project.wsgi.application'
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME', default='exhibition_db'),
-        'USER': env('DB_USER', default='exhibition_user'),
-        'PASSWORD': env('DB_PASSWORD', default='exhibition_pass_2024'),
-        'HOST': env('DB_HOST', default='db'),
-        'PORT': env('DB_PORT', default='5432'),
+# Check if DATABASE_URL is set (Railway, Heroku, etc.)
+if 'DATABASE_URL' in os.environ:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+else:
+    # Local development or custom deployment
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': env('DB_NAME', default='exhibition_db'),
+            'USER': env('DB_USER', default='exhibition_user'),
+            'PASSWORD': env('DB_PASSWORD', default='exhibition_pass_2024'),
+            'HOST': env('DB_HOST', default='db'),
+            'PORT': env('DB_PORT', default='5432'),
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -105,6 +118,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise configuration for serving static files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
 MEDIA_URL = '/media/'

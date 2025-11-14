@@ -116,17 +116,52 @@ urls: ## Show all URL patterns
 	@$(DOCKER_EXEC) python manage.py show_urls || echo "Install django-extensions for this feature"
 
 # Production commands
+prod-deploy: ## Deploy to production (first time)
+	@./prod-deploy.sh
+
+prod-update: ## Update production (code changes)
+	@./prod-update.sh
+
 prod-start: ## Start production environment
 	@docker-compose -f docker-compose.prod.yml up -d
 
 prod-stop: ## Stop production environment
 	@docker-compose -f docker-compose.prod.yml down
 
+prod-restart: ## Restart production environment
+	@docker-compose -f docker-compose.prod.yml restart
+
 prod-logs: ## Show production logs
 	@docker-compose -f docker-compose.prod.yml logs -f
 
+prod-logs-web: ## Show production web logs
+	@docker-compose -f docker-compose.prod.yml logs -f web
+
+prod-logs-nginx: ## Show production nginx logs
+	@docker-compose -f docker-compose.prod.yml logs -f nginx
+
 prod-build: ## Build production containers
 	@docker-compose -f docker-compose.prod.yml build
+
+prod-migrate: ## Run migrations in production
+	@docker-compose -f docker-compose.prod.yml exec web python manage.py migrate
+
+prod-collectstatic: ## Collect static files in production
+	@docker-compose -f docker-compose.prod.yml exec web python manage.py collectstatic --noinput
+
+prod-shell: ## Open shell in production web container
+	@docker-compose -f docker-compose.prod.yml exec web sh
+
+prod-dbshell: ## Open database shell in production
+	@docker-compose -f docker-compose.prod.yml exec db psql -U exhibition_user_prod exhibition_db_prod
+
+prod-backup: ## Backup production database
+	@mkdir -p backups
+	@docker-compose -f docker-compose.prod.yml exec -T db pg_dump -U exhibition_user_prod exhibition_db_prod > backups/prod_backup_$$(date +%Y%m%d_%H%M%S).sql
+	@echo "✅ Backup created in backups/ directory"
+
+prod-ps: ## Show production container status
+	@docker-compose -f docker-compose.prod.yml ps
 
 # Utility commands
 install-deps: ## Install Python dependencies
