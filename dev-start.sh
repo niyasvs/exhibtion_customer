@@ -21,7 +21,7 @@ if [ ! -f .env ]; then
 # Development Environment Variables
 DEBUG=True
 SECRET_KEY=dev-secret-key-change-this-in-production
-ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+ALLOWED_HOSTS=*localhost,127.0.0.1,0.0.0.0
 
 # Database Configuration
 DB_NAME=exhibition_db_dev

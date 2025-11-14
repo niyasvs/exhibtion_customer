@@ -23,7 +23,7 @@ cat > $ENV_FILE << 'EOF'
 # Django Settings
 SECRET_KEY=django-insecure-dev-key-change-in-production-12345678901234567890
 DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+ALLOWED_HOSTS=*,localhost,127.0.0.1,0.0.0.0
 
 # Database
 DB_NAME=exhibition_db
