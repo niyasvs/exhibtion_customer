@@ -15,9 +15,10 @@ env = environ.Env(
     DEBUG=(bool, False)
 )
 
-# Read .env file if it exists
+# Read .env file if it exists (but not on Railway/Heroku)
 env_file = os.path.join(BASE_DIR, '.env')
-if os.path.exists(env_file):
+if os.path.exists(env_file) and 'DATABASE_URL' not in os.environ:
+    # Only read .env if DATABASE_URL is not already set (i.e., not on Railway)
     environ.Env.read_env(env_file)
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -71,17 +72,20 @@ TEMPLATES = [
 WSGI_APPLICATION = 'exhibition_project.wsgi.application'
 
 # Database
-# Check if DATABASE_URL is set (Railway, Heroku, etc.)
-if 'DATABASE_URL' in os.environ:
+# Priority: DATABASE_URL (Railway/Heroku) > Individual DB vars (local/VPS)
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    # Railway, Heroku, or any platform that provides DATABASE_URL
     DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL'),
+        'default': dj_database_url.parse(
+            DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
         )
     }
 else:
-    # Local development or custom deployment
+    # Local development or custom deployment with individual variables
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
