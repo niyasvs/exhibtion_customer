@@ -147,7 +147,11 @@ APP_URL = env('APP_URL', default='http://localhost:8000')
 
 # Security Settings for Production
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
+    # Tell Django to trust Railway's proxy SSL headers
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    
+    # Enable these after confirming site works
+    # SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
