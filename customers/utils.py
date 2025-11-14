@@ -44,6 +44,7 @@ def send_customer_welcome_email(customer):
     Send welcome email to customer with their unique ID and QR code.
     Generates QR code on-the-fly without saving to database.
     """
+    print(f"=== Attempting to send email to {customer.email} ===")
     subject = f'Welcome! Your Customer ID: {customer.customer_id}'
     
     # Create email body
@@ -78,10 +79,14 @@ def send_customer_welcome_email(customer):
     
     # Send email
     try:
-        email.send()
+        print(f"=== Sending email with QR code to {customer.email} ===")
+        result = email.send()
+        print(f"=== Email send result: {result} ===")
         return True
     except Exception as e:
-        print(f"Error sending email: {e}")
+        print(f"=== ERROR sending email: {e} ===")
+        import traceback
+        traceback.print_exc()
         return False
 
 

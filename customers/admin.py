@@ -102,23 +102,25 @@ class CustomerAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
         
         if is_new:
-            # Send welcome email with QR code (generated on-the-fly)
-            email_sent = send_customer_welcome_email(obj)
+            # Send welcome email in background to avoid timeout
+            import threading
             
-            if email_sent:
-                obj.email_sent = True
-                obj.save(update_fields=['email_sent'])
-                messages.success(
-                    request,
-                    f'Customer {obj.name} created successfully! '
-                    f'Email sent to {obj.email} with customer ID: {obj.customer_id}'
-                )
-            else:
-                messages.warning(
-                    request,
-                    f'Customer {obj.name} created with ID: {obj.customer_id}, '
-                    f'but email could not be sent. Please check email configuration.'
-                )
+            def send_email_background():
+                email_sent = send_customer_welcome_email(obj)
+                if email_sent:
+                    obj.email_sent = True
+                    obj.save(update_fields=['email_sent'])
+            
+            # Start email sending in background thread
+            email_thread = threading.Thread(target=send_email_background)
+            email_thread.daemon = True
+            email_thread.start()
+            
+            messages.success(
+                request,
+                f'Customer {obj.name} created successfully with ID: {obj.customer_id}. '
+                f'Email will be sent shortly.'
+            )
 
     def email_sent_status(self, obj):
         """Display email sent status with icons."""
